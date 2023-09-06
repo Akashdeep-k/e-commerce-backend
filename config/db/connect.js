@@ -1,13 +1,13 @@
 const mongoose = require("mongoose")
 const uri = process.env.DATABASE_URL
 
-const main = async () => {
+const dbConnect = async () => {
     try {
         await mongoose.connect(uri);
         console.log("Connected to database successfully")
     } catch (e) {
-        console.error(`Error : ${e}`)
+        console.error(e)
     }
 }
 
-main()
+module.exports = dbConnect
