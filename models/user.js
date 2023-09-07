@@ -2,48 +2,74 @@ const mongoose = require('mongoose');
 const validator = require("validator")
 const bcrypt = require("bcrypt")
 
-const userSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        required: true,
-        trim: true
+
+const userSchema = new mongoose.Schema(
+    {
+        firstName: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        lastName: {
+            type: String,
+            required: true,
+            trim: true,
+        },
+        mobile: {
+            type: String,
+            required: true,
+            unique: true,
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            validate: {
+                validator: validator.isEmail,
+                message: 'Invalid email address',
+            },
+        },
+        password: {
+            type: String,
+            required: true,
+            trim: true,
+            minlength: 6,
+            validate: {
+                validator: function (value) {
+                    return !value.toLowerCase().includes('password');
+                },
+                message: 'Password should not contain the word "password"',
+            },
+        },
+        role: {
+            type: String,
+            default: 'user',
+        },
+        isBlocked: {
+            type: Boolean,
+            default: false,
+        },
+        cart: {
+            type: Array,
+            default: [],
+        },
+        address: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Address',
+            },
+        ],
+        wishlist: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Product',
+            },
+        ],
     },
-    lastName: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    mobile: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        validate(value) {
-            if (!validator.isEmail(value)) {
-                throw new Error("Email is invalid")
-            }
-        }
-    },
-    password: {
-        type: String,
-        required: true,
-        trim: true,
-        minlength: 6,
-        validate(value) {
-            if (value.toLowerCase().includes("password")) {
-                throw new Error("Password should not contain 'password'")
-            }
-        }
-    },
-    role: {
-        type: String,
-        default: "user"
+    {
+        timestamps: true,
     }
-});
+);
 
 userSchema.methods.toJSON = function () {
     const userObject = this.toObject()
