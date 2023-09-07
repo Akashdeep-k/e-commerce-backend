@@ -5,7 +5,9 @@ const {
     getAllUsers,
     getAUser,
     deleteAUser,
-    updateAUser } = require("../controllers/user.js")
+    updateAUser,
+    blockAUser,
+    unblockAUser } = require("../controllers/user.js")
 
 const {
     authMiddleware,
@@ -19,5 +21,7 @@ router.get("/all-users", authMiddleware, isAdmin, getAllUsers)
 router.get("/:id", getAUser)
 router.delete("/:id", deleteAUser)
 router.patch("/edit-user", authMiddleware, updateAUser)
+router.patch("/block-user/:id", authMiddleware, isAdmin, blockAUser)
+router.patch("/unblock-user/:id", authMiddleware, isAdmin, unblockAUser)
 
 module.exports = router
