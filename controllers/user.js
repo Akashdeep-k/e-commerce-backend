@@ -48,11 +48,35 @@ const getAUser = asyncHandler(async (req, res) => {
 })
 
 const deleteAUser = asyncHandler(async (req, res) => {
-    try{
+    try {
         const { id } = req.params
         const user = await User.findByIdAndDelete(id)
         res.json(user)
-    } catch(e){
+    } catch (e) {
+        throw new Error(e)
+    }
+})
+
+const updateAUser = asyncHandler(async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedupdates = ["firstName", "lastName", "email", "mobile", "password", "role"]
+
+    const validUpdates = updates.every(update => allowedupdates.includes(update))
+
+    if (!validUpdates) {
+        res.status(400)
+        throw new Error("Invalid updates")
+    }
+
+    try {
+        const user = await User.findById(req.params.id)
+        updates.forEach((update) => {
+            user[update] = req.body[update]
+        })
+        await user.save()
+
+        res.json(user)
+    } catch (e) {
         throw new Error(e)
     }
 })
@@ -62,5 +86,6 @@ module.exports = {
     loginUser,
     getAllUsers,
     getAUser,
-    deleteAUser
+    deleteAUser,
+    updateAUser
 }
