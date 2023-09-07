@@ -39,7 +39,18 @@ const userSchema = new mongoose.Schema({
             }
         }
     },
+    role: {
+        type: String,
+        default: "user"
+    }
 });
+
+userSchema.methods.toJSON = function () {
+    const userObject = this.toObject()
+
+    delete userObject.password
+    return userObject
+}
 
 userSchema.pre('save', async function (next) {
     const user = this;
@@ -48,4 +59,8 @@ userSchema.pre('save', async function (next) {
     }
     next();
 })
+
+userSchema.methods.isPasswordMatch = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password)
+}
 module.exports = mongoose.model("User", userSchema);
