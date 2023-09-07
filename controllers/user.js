@@ -29,12 +29,27 @@ const loginUser = asyncHandler(async (req, res) => {
 })
 
 const getAllUsers = asyncHandler(async (req, res) => {
-    try{
+    try {
         const users = await User.find();
         res.json(users)
-    } catch (e){
+    } catch (e) {
         throw new Error(e)
     }
 })
 
-module.exports = { createUser, loginUser, getAllUsers }
+const getAUser = asyncHandler(async (req, res) => {
+    try {
+        const { id } = req.params
+        const user = await User.findById(id)
+        res.json(user)
+    } catch (e) {
+        throw new Error(e)
+    }
+})
+
+module.exports = {
+    createUser,
+    loginUser,
+    getAllUsers,
+    getAUser
+}
