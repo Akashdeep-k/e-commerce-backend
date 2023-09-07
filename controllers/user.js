@@ -69,13 +69,12 @@ const updateAUser = asyncHandler(async (req, res) => {
     }
 
     try {
-        const user = await User.findById(req.params.id)
         updates.forEach((update) => {
-            user[update] = req.body[update]
+            req.user[update] = req.body[update]
         })
-        await user.save()
+        await req.user.save()
 
-        res.json(user)
+        res.json(req.user)
     } catch (e) {
         throw new Error(e)
     }
