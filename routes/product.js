@@ -9,10 +9,16 @@ const {
     deleteAProduct
 } = require("../controllers/product.js")
 
-router.post("/", createProduct)
+const {
+    authMiddleware,
+    isAdmin
+} = require("../middlewares/authMiddleware.js")
+
+
+router.post("/", authMiddleware, isAdmin, createProduct)
 router.get("/:id", getAProduct)
 router.get("/", getAllProducts)
-router.patch("/:id", updateAProduct)
-router.delete("/:id", deleteAProduct)
+router.patch("/:id", authMiddleware, isAdmin, updateAProduct)
+router.delete("/:id", authMiddleware, isAdmin, deleteAProduct)
 
 module.exports = router
