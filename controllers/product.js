@@ -22,7 +22,17 @@ const getAProduct = asyncHandler(async (req, res) => {
     }
 })
 
+const getAllProducts = asyncHandler(async (req, res) => {
+    try {
+        const products = await Product.find()
+        res.json(products)
+    } catch (e) {
+        throw new Error(e)
+    }
+})
+
 module.exports = {
     createProduct,
-    getAProduct
+    getAProduct,
+    getAllProducts
 }
