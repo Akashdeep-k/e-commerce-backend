@@ -4,11 +4,13 @@ const router = express.Router()
 const {
     createProduct,
     getAProduct,
-    getAllProducts
+    getAllProducts,
+    updateAProduct
 } = require("../controllers/product.js")
 
 router.post("/", createProduct)
 router.get("/:id", getAProduct)
 router.get("/", getAllProducts)
+router.patch("/:id", updateAProduct)
 
 module.exports = router

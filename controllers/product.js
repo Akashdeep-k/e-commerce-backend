@@ -31,8 +31,23 @@ const getAllProducts = asyncHandler(async (req, res) => {
     }
 })
 
+const updateAProduct = asyncHandler(async (req, res) => {
+    const { id } = req.params
+    try {
+        if(req.body.title){
+            req.body.slug = slugify(req.body.title)
+        }
+        const product = await Product.findByIdAndUpdate(id, req.body, { new: true })
+
+        res.json(product)
+    } catch (e) {
+        throw new Error(e)
+    }
+})
+
 module.exports = {
     createProduct,
     getAProduct,
-    getAllProducts
+    getAllProducts,
+    updateAProduct
 }
