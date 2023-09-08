@@ -3,6 +3,7 @@ const asyncHandler = require("express-async-handler")
 const getAuthToken = require("../config/jwtToken.js")
 const isValidMongoDbId = require("../utils/validateMongoDbId.js")
 const getRefreshAuthToken = require("../config/refreshToken.js")
+const jwt = require("jsonwebtoken")
 
 const createUser = asyncHandler(async (req, res) => {
     const email = req.body.email
@@ -40,6 +41,29 @@ const loginUser = asyncHandler(async (req, res) => {
         res.status(400)
         throw new Error("Invalid Credentials")
     }
+})
+
+const handleRefreshToken = asyncHandler(async (req, res) => {
+    const cookie = req.cookies
+    if (!cookie.refreshToken) {
+        throw new Error("No refresh token in cookies")
+    }
+
+    const refreshToken = cookie.refreshToken
+    const user = await User.findOne({ refreshToken })
+
+    if (!user) {
+        throw new Error("No refresh token present in db or not matched")
+    }
+    
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET)
+    if(user._id.toString() !== decoded.id){
+        console.log(user._id, decoded.id)
+        throw new Error("There is something wrong with refresh token")
+    }
+
+    const accessToken = await getAuthToken(user._id)
+    res.json(accessToken)
 })
 
 const getAllUsers = asyncHandler(async (req, res) => {
@@ -131,6 +155,7 @@ const unblockAUser = asyncHandler(async (req, res) => {
 module.exports = {
     createUser,
     loginUser,
+    handleRefreshToken,
     getAllUsers,
     getAUser,
     deleteAUser,

@@ -2,6 +2,7 @@ const express = require("express")
 const {
     createUser,
     loginUser,
+    handleRefreshToken,
     getAllUsers,
     getAUser,
     deleteAUser,
@@ -17,6 +18,7 @@ const router = express.Router()
 
 router.post("/register", createUser)
 router.post("/login", loginUser)
+router.get("/refresh", handleRefreshToken)
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers)
 router.get("/:id", getAUser)
 router.delete("/:id", deleteAUser)
