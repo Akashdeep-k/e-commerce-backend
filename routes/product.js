@@ -5,6 +5,6 @@ const {
     createProduct
 } = require("../controllers/product.js")
 
-router.get("/create", createProduct)
+router.post("/create", createProduct)
 
 module.exports = router
