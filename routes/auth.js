@@ -8,7 +8,8 @@ const {
     deleteAUser,
     updateAUser,
     blockAUser,
-    unblockAUser } = require("../controllers/user.js")
+    unblockAUser,
+    logoutUser } = require("../controllers/user.js")
 
 const {
     authMiddleware,
@@ -19,6 +20,7 @@ const router = express.Router()
 router.post("/register", createUser)
 router.post("/login", loginUser)
 router.get("/refresh", handleRefreshToken)
+router.get("/logout", logoutUser)
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers)
 router.get("/:id", getAUser)
 router.delete("/:id", deleteAUser)
