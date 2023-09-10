@@ -34,21 +34,31 @@ const getAllProducts = asyncHandler(async (req, res) => {
         let query = Product.find(JSON.parse(queryStr))
 
         //Sorting
-        if(req.query.sort){
+        if (req.query.sort) {
             const sortBy = req.query.sort.split(',').join(" ")
             query = query.sort(sortBy)
         }
-        else{
+        else {
             query = query.sort("createdAt")
         }
 
         //Fields
-        if(req.query.fields){
+        if (req.query.fields) {
             const fields = req.query.fields.split(",").join(" ");
             query = query.select(fields)
         }
-        else{
+        else {
             query = query.select("-__v")
+        }
+
+        //Pagination
+        const page = req.query.page;
+        const limit = req.query.limit;
+        const skip = (page - 1) * limit;
+        query = query.skip(skip).limit(limit);
+        if (req.query.page) {
+            const productCount = await Product.countDocuments();
+            if (skip >= productCount) throw new Error("This Page does not exists");
         }
 
         const products = await query
