@@ -9,7 +9,8 @@ const {
     updateAUser,
     blockAUser,
     unblockAUser,
-    logoutUser } = require("../controllers/user.js")
+    logoutUser,
+    updatePassword } = require("../controllers/user.js")
 
 const {
     authMiddleware,
@@ -19,6 +20,7 @@ const router = express.Router()
 
 router.post("/register", createUser)
 router.post("/login", loginUser)
+router.patch("/password", authMiddleware, updatePassword)
 router.get("/refresh", handleRefreshToken)
 router.get("/logout", logoutUser)
 router.get("/all-users", authMiddleware, isAdmin, getAllUsers)

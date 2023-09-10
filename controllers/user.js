@@ -177,6 +177,17 @@ const unblockAUser = asyncHandler(async (req, res) => {
     }
 })
 
+const updatePassword = asyncHandler(async (req, res) => {
+    const { password } = req.body;
+    if (password) {
+        req.user.password = password;
+        await req.user.save();
+        res.json(req.user);
+    } else {
+        res.json(req.user);
+    }
+});
+
 module.exports = {
     createUser,
     loginUser,
@@ -187,5 +198,6 @@ module.exports = {
     deleteAUser,
     updateAUser,
     blockAUser,
-    unblockAUser
+    unblockAUser,
+    updatePassword
 }
