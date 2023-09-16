@@ -12,7 +12,7 @@ const createProduct = asyncHandler(async (req, res) => {
     }
 })
 
-const getAProduct = asyncHandler(async (req, res) => {
+const getProduct = asyncHandler(async (req, res) => {
     const { id } = req.params
     try {
         const product = await Product.findById(id)
@@ -68,7 +68,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
     }
 })
 
-const updateAProduct = asyncHandler(async (req, res) => {
+const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params
     try {
         if (req.body.title) {
@@ -82,7 +82,7 @@ const updateAProduct = asyncHandler(async (req, res) => {
     }
 })
 
-const deleteAProduct = asyncHandler(async (req, res) => {
+const deleteProduct = asyncHandler(async (req, res) => {
     const { id } = req.params
     try {
         const product = await Product.findByIdAndDelete(id)
@@ -94,8 +94,8 @@ const deleteAProduct = asyncHandler(async (req, res) => {
 
 module.exports = {
     createProduct,
-    getAProduct,
+    getProduct,
     getAllProducts,
-    updateAProduct,
-    deleteAProduct
+    updateProduct,
+    deleteProduct
 }

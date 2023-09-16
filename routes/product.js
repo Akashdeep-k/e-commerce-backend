@@ -3,22 +3,22 @@ const router = express.Router()
 
 const {
     createProduct,
-    getAProduct,
+    getProduct,
     getAllProducts,
-    updateAProduct,
-    deleteAProduct
+    updateProduct,
+    deleteProduct
 } = require("../controllers/product.js")
 
 const {
-    authMiddleware,
+    auth,
     isAdmin
-} = require("../middlewares/authMiddleware.js")
+} = require("../middlewares/auth.js")
 
 
-router.post("/", authMiddleware, isAdmin, createProduct)
-router.get("/:id", getAProduct)
+router.post("/", auth, isAdmin, createProduct)
+router.get("/:id", getProduct)
 router.get("/", getAllProducts)
-router.patch("/:id", authMiddleware, isAdmin, updateAProduct)
-router.delete("/:id", authMiddleware, isAdmin, deleteAProduct)
+router.patch("/:id", auth, isAdmin, updateProduct)
+router.delete("/:id", auth, isAdmin, deleteProduct)
 
 module.exports = router

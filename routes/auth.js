@@ -1,33 +1,34 @@
 const express = require("express")
 const {
-    createUser,
-    loginUser,
-    handleRefreshToken,
+    signup,
+    login,
+    refreshToken,
+    logout,
     getAllUsers,
-    getAUser,
-    deleteAUser,
-    updateAUser,
-    blockAUser,
-    unblockAUser,
-    logoutUser,
+    getUser,
+    deleteUser,
+    updateUser,
+    blockUser,
+    unblockUser,
     updatePassword } = require("../controllers/user.js")
 
 const {
-    authMiddleware,
-    isAdmin } = require("../middlewares/authMiddleware.js")
+    auth,
+    isAdmin } = require("../middlewares/auth.js")
 
 const router = express.Router()
 
-router.post("/register", createUser)
-router.post("/login", loginUser)
-router.patch("/password", authMiddleware, updatePassword)
-router.get("/refresh", handleRefreshToken)
-router.get("/logout", logoutUser)
-router.get("/all-users", authMiddleware, isAdmin, getAllUsers)
-router.get("/:id", getAUser)
-router.delete("/:id", deleteAUser)
-router.patch("/edit-user", authMiddleware, updateAUser)
-router.patch("/block-user/:id", authMiddleware, isAdmin, blockAUser)
-router.patch("/unblock-user/:id", authMiddleware, isAdmin, unblockAUser)
+router.post("/signup", signup)
+router.post("/login", login)
+router.patch("/password", auth, updatePassword)
+router.get("/refresh", refreshToken)
+router.get("/logout", logout)
+
+router.get("/all-users", auth, isAdmin, getAllUsers)
+router.get("/:id", getUser)
+router.delete("/:id", deleteUser)
+router.patch("/edit", auth, updateUser)
+router.patch("/block/:id", auth, isAdmin, blockUser)
+router.patch("/unblock/:id", auth, isAdmin, unblockUser)
 
 module.exports = router
