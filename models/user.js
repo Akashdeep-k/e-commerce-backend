@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require("validator")
 const bcrypt = require("bcrypt")
-const crypto = require("crypto")
+const jwt = require("jsonwebtoken")
+const sendPasswordResetEmail = require("../controllers/email.js");
 
 const userSchema = new mongoose.Schema(
     {
@@ -68,9 +69,6 @@ const userSchema = new mongoose.Schema(
                 ref: 'Product',
             },
         ],
-        passwordChangedAt: Date,
-        passwordResetToken: String,
-        passwordResetExpires: Date,
     },
     {
         timestamps: true,
@@ -89,15 +87,13 @@ userSchema.methods.isPasswordMatch = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
-userSchema.methods.createPasswordResetToken = async function () {
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    console.log(resetToken)
-    this.passwordResetToken = crypto
-        .createHash("sha256")
-        .update(resetToken)
-        .digest("hex");
-    this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
-    return resetToken;
+userSchema.methods.resetPassword = function () {
+    const { id, email } = this
+    const payload = { id, email }
+    const RESET_TOKEN_SECRET = process.env.RESET_PASSWORD_SECRET + this.password
+    const resetToken = jwt.sign(payload, RESET_TOKEN_SECRET, { expiresIn: '15m' })
+
+    sendPasswordResetEmail(email, id, resetToken)
 }
 
 module.exports = mongoose.model("User", userSchema);

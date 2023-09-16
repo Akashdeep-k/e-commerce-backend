@@ -10,7 +10,9 @@ const {
     updateUser,
     blockUser,
     unblockUser,
-    updatePassword } = require("../controllers/user.js")
+    updatePassword,
+    forgotPassword,
+    resetPassword } = require("../controllers/user.js")
 
 const {
     auth,
@@ -21,6 +23,8 @@ const router = express.Router()
 router.post("/signup", signup)
 router.post("/login", login)
 router.patch("/password", auth, updatePassword)
+router.post("/forgot-password", forgotPassword)
+router.patch("/:id/:token", resetPassword)
 router.get("/refresh", refreshToken)
 router.get("/logout", logout)
 

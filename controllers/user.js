@@ -19,31 +19,22 @@ const signup = asyncHandler(async (req, res) => {
 })
 
 const login = asyncHandler(async (req, res) => {
-    console.log("Hi3")
     const { email, password } = req.body
-    console.log("Hi4")
     const user = await User.findOne({ email })
-    console.log("Hi5")
     console.log(email, password)
     console.log(user)
     if (user && await user.isPasswordMatch(password)) {
-        console.log("Hi6")
         const refreshToken = getRefreshToken(user._id)
-        console.log("Hi7")
         await User.findByIdAndUpdate(user._id, {
             refreshToken
         })
-        console.log("Hi8")
         res.cookie("refreshToken", refreshToken, {
             httpOnly: true,
             maxAge: 72 * 60 * 60 * 1000 //3 days
         })
-        console.log("Hi9")
 
         const accessToken = getAccessToken(user._id)
         res.json({ user, accessToken })
-        console.log("Hi10")
-
     }
     else {
         res.status(400)
@@ -184,6 +175,48 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 });
 
+const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body
+    try {
+        const user = await User.findOne({ email })
+        if (!user) {
+            res.status(400)
+            throw new Error("User doesn't exists")
+        }
+        user.resetPassword()
+        res.send("Password reset link sent to your email")
+    } catch (e) {
+        throw new Error(e)
+    }
+})
+
+const resetPassword = asyncHandler(async (req, res) => {
+    const { id, token } = req.params
+    const {newPassword} = req.body
+    try {
+        isValidMongoDbId(id)
+        const user = await User.findById(id)
+        if (!user) {
+            res.status(400)
+            throw new Error("User doesn't exists")
+        }
+
+        const RESET_TOKEN_SECRET = process.env.RESET_PASSWORD_SECRET + user.password
+        const payload = jwt.verify(token, RESET_TOKEN_SECRET)
+        if(id !== payload.id){
+            res.status(400)
+            throw new Error("This url doesn't exists")
+        }
+
+        user.password = newPassword
+        await user.save()
+        res.send("Password reset successfully")
+
+    } catch (e) {
+        throw new Error(e)
+    }
+})
+
 module.exports = {
     signup,
     login,
@@ -195,5 +228,7 @@ module.exports = {
     updateUser,
     blockUser,
     unblockUser,
-    updatePassword
+    updatePassword,
+    forgotPassword,
+    resetPassword
 }
